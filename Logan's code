@@ -1,0 +1,43 @@
+#include <iostream>
+#include <fstream>
+#include <bitset>
+#include <sstream>
+
+std::string textToBinary(const std::string& text) {
+    std::string binaryResult;
+    for (char c : text) {
+        binaryResult += std::bitset<8>(c).to_string() + " ";
+    }
+    return binaryResult;
+}
+
+int main() {
+    std::string filename;
+    std::cout << "Enter the filename: ";
+    std::cin >> filename;
+    
+    std::ifstream inFile(filename);
+    if (!inFile) {
+        std::cerr << "Error: Could not open the file for reading." << std::endl;
+        return 1;
+    }
+    
+    std::ostringstream buffer;
+    buffer << inFile.rdbuf();
+    std::string textInput = buffer.str();
+    inFile.close();
+
+    std::string binaryOutput = textToBinary(textInput);
+
+    std::ofstream outFile(filename, std::ios::trunc);
+    if (outFile) {
+        outFile << binaryOutput;
+        outFile.close();
+        std::cout << "Binary data has been written to " << filename << "!" << std::endl;
+    } else {
+        std::cerr << "Error: Could not open the file for writing." << std::endl;
+        return 1;
+    }
+
+    return 0;
+}
