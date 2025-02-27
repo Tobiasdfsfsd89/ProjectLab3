@@ -1,0 +1,29 @@
+#include <IRremote.h>
+
+const byte IR_RECEIVE_PIN = 15;  
+const byte IR_SEND_PIN = 4;
+
+void setup() {
+    Serial.begin(115200);
+
+    IrReceiver.begin(IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
+    Serial.println("IR Receiver Ready");
+    
+    // Initialize IR sender and receiver
+    IrSender.begin(IR_SEND_PIN, ENABLE_LED_FEEDBACK, USE_DEFAULT_FEEDBACK_LED_PIN);
+    Serial.println("IR Sender Ready");
+}
+
+void loop() {
+    //Send an IR signal
+    Serial.println("Sending IR signal...");
+    IrSender.sendNEC(0xF7C03F, 38);  // Data and Frequency in KHZ
+    delay(2000);  // Wait before sending again
+
+    // Check if an IR signal is received
+    if (IrReceiver.decode()) {
+        Serial.println("IR Signal Received!");
+        IrReceiver.printIRResultShort(&Serial);  // Print decoded IR data
+        IrReceiver.resume();  // Prepare for next reception
+    }
+}
